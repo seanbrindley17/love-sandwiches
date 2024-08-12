@@ -14,7 +14,10 @@ SHEET = GSPREAD_CLIENT.open("love_sandwiches")
 
 def get_sales_data():   #Runs a while loop that asks the user for data
     """
-    Get sales figures input from the user
+    Get sales figures input from the user.
+    Run a while loop to collect a valid string of data from the user via the terminal
+    which must be a string of 6 numbers separated by commas.
+    The loop will repeatedly request data, until it is valid.
     """
     while True:     #Loop which will only end when correct data is given
         print("Please enter sales data from the last market.")
@@ -28,6 +31,7 @@ def get_sales_data():   #Runs a while loop that asks the user for data
         if validate_data(sales_data):   #Calls validate data function, passing the sales data list
             print("Data is valid")  #Checks for errors, if none are found then this is printed
             break                   #and the while loop is stopped
+    return sales_data   #returns validated sales data
 
 def validate_data(values):
     """
@@ -48,4 +52,15 @@ def validate_data(values):
     
     return True     #If data input is correct, true is returned
 
-get_sales_data()
+def update_sales_worksheet(data):
+    """
+    Update sales worksheet, add new row with list data provided.
+    """
+    print("Updating sales worksheet...\n")  #If we see this print statement before an error, we know our program got this far before it hit a problem
+    sales_worksheet = SHEET.worksheet("sales") #Access the sales worksheet from the Google sheet using .worksheet method. Name corresponds to the name of the actual worksheet
+    sales_worksheet.append_row(data) #Add new row to data in worksheet selected
+    print("Sales worksheet updated successfully.\n") #Print this if worksheet is updated succesfully
+
+data = get_sales_data()
+sales_data = [int(num) for num in data] #sales_data is assigned the result of this list comprehension
+update_sales_worksheet(sales_data)  #Calls this funtion passing in the sales_data list
