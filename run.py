@@ -64,7 +64,7 @@ def update_sales_worksheet(data):
     print("Sales worksheet updated successfully.\n") #Print this if worksheet is updated succesfully
 
 
-def calculate_surplus_data(sales_data): #Passing in sales data list
+def calculate_surplus_data(sales_row): #Passing in sales data list
     """
     Compare sales with stock and calculate the surplus for each item type.
     The surplus is defined as the sales figure subtracted from the stock:
@@ -73,8 +73,15 @@ def calculate_surplus_data(sales_data): #Passing in sales data list
     """
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values() #Use gspread to get the values from the stock worksheet in the google doc
-    stock_row = stock[-1]
-    print(stock_row)
+    stock_row = stock[-1] #Gets the last row of the stock spreadsheet using slice method
+    
+    surplus_data = [] #Add empty list for the surplus data to be put into
+    for stock, sales in zip(stock_row, sales_row): #zip() method allows parsing of two or more data structures in a single loop
+        surplus = int(stock) - sales #Use int() to get the integer value of the stock instead of string
+        surplus_data.append(surplus) #Appends the surplus results from above to the surplus_data list
+    
+    return surplus_data
+
 
 def main():   #Common practice to put the main function calls of a program inside a function called main
     """
@@ -83,8 +90,9 @@ def main():   #Common practice to put the main function calls of a program insid
     data = get_sales_data()
     sales_data = [int(num) for num in data] #sales_data is assigned the result of this list comprehension
     update_sales_worksheet(sales_data)  #Calls this funtion passing in the sales_data list
-    calculate_surplus_data(sales_data)
+    new_surplus_data = calculate_surplus_data(sales_data)
+    print(new_surplus_data)
 
-    print("Welcome to Love Sandwiches Data Automation\n")
-    main()
-
+    
+print("Welcome to Love Sandwiches Data Automation\n")
+main()
