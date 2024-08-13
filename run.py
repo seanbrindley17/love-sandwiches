@@ -1,5 +1,7 @@
+
 import gspread
 from google.oauth2.service_account import Credentials
+
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -61,6 +63,28 @@ def update_sales_worksheet(data):
     sales_worksheet.append_row(data) #Add new row to data in worksheet selected
     print("Sales worksheet updated successfully.\n") #Print this if worksheet is updated succesfully
 
-data = get_sales_data()
-sales_data = [int(num) for num in data] #sales_data is assigned the result of this list comprehension
-update_sales_worksheet(sales_data)  #Calls this funtion passing in the sales_data list
+
+def calculate_surplus_data(sales_data): #Passing in sales data list
+    """
+    Compare sales with stock and calculate the surplus for each item type.
+    The surplus is defined as the sales figure subtracted from the stock:
+    - Positive surplus indicates waste
+    - Negative surplus indicates extra made when the stock was sold out
+    """
+    print("Calculating surplus data...\n")
+    stock = SHEET.worksheet("stock").get_all_values() #Use gspread to get the values from the stock worksheet in the google doc
+    stock_row = stock[-1]
+    print(stock_row)
+
+def main():   #Common practice to put the main function calls of a program inside a function called main
+    """
+    Run all program functions
+    """
+    data = get_sales_data()
+    sales_data = [int(num) for num in data] #sales_data is assigned the result of this list comprehension
+    update_sales_worksheet(sales_data)  #Calls this funtion passing in the sales_data list
+    calculate_surplus_data(sales_data)
+
+    print("Welcome to Love Sandwiches Data Automation\n")
+    main()
+
